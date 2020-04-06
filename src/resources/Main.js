@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import RNSecureKeyStore from "react-native-secure-key-store";
 
@@ -13,14 +13,16 @@ import Orders from './tabs/Orders';
 import Account from './tabs/Account';
 import Auth from './auth/Auth';
 
-export default class Splash extends React.Component {
+export default class Main extends React.Component {
 
-    state = { isLogged: false, index: 0, routes: [
+    state = { isLogged: null, index: 0, routes: [
         {key: 'home', title: 'Home' },
         {key: 'specials', title: 'Specials' },
         {key: 'orders', title: 'Orders' },
         {key: 'account', title: 'Account' },
     ] };
+
+    _isMounted = false;
 
     _scenes() {
         return SceneMap({
@@ -43,12 +45,13 @@ export default class Splash extends React.Component {
         try {
             // Check token exits on the server before authenticating
             const res = await RNSecureKeyStore.get('token');
-
+            this.setState({ isLogged: true });
             // Return true if exits and match local token
-            return true;
         } catch(err) {
-            return false;
+            this.setState({ isLogged: false });
         }
+
+        console.log(this.state.isLogged);
     }
 
     static options(props) {
@@ -58,12 +61,19 @@ export default class Splash extends React.Component {
     }
 
     componentDidMount() {
-        this.isAuthenticated = this._isAuthenticated();
+        this._isMounted = true;
+        
+        if (this._isMounted) {
+            this._isAuthenticated();
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
-
-        if (this.isAuthenticated) {
+        if (this.state.isLogged) {
             return (
                 <TabView
                     renderScene={this._scenes()}
@@ -73,9 +83,17 @@ export default class Splash extends React.Component {
                     onIndexChange={this._scenesChange.bind(this)}
                 />
             );
+        } else if (this.state.isLogged == false) {
+            return <Auth />
+        } else {
+            return (
+                <View style={css.indicator}>
+                    <ActivityIndicator size={35} color="#FF6F00" />
+                    <Text style={{ paddingTop: 5, color: '#666' }}>Loading...</Text>
+                </View>
+            );
         }
 
-        return <Auth />
     }
 }
 
@@ -83,5 +101,11 @@ const css = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF'
+    },
+    indicator: {
+        flex: 1,
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center'
     }
 });

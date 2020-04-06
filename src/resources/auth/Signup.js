@@ -1,11 +1,40 @@
 import React from 'react';
+import _ from 'lodash';
+import { StyleSheet, View, Alert } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements'
-import { StyleSheet, View } from 'react-native';
+
+// Components
+import Storage from '../../app/Storage';
 
 // Icon
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class Signup extends React.Component {
+
+    state = { email: null, password: null, active: false }
+
+    async _register() {
+
+        this.setState({ active: true });
+
+        // Creditials
+        let creditials = {
+            email: this.state.email,
+            password: this.state.password
+        };
+
+        if (_.isEmpty(creditials.email) == '' || _.isEmpty(creditials.password == '')) {
+            this.setState({ active: false });
+            return Alert.alert('Signup', 'Registration fail!');
+        }
+
+        // Store
+        await Storage.set('creditials', JSON.stringify(creditials));
+
+        this.setState({ active: false });
+        Alert.alert('Signup', 'Account registered successfully!');
+
+    }
 
     render() {
 
@@ -25,14 +54,26 @@ export default class Signup extends React.Component {
                     />
                     <Input
                         placeholder='Email'
+                        onChangeText={email => this.setState({ email })}
                         leftIcon={<Icon name='envelope' style={css.icon} size={15} color='#666' />}
                     />
                     <Input
+                        secureTextEntry
                         placeholder='Password'
+                        onChangeText={password => this.setState({ password })}
+                        leftIcon={<Icon name='lock' style={css.icon} size={20} color='#666' />}
+                    />
+                    <Input
+                        secureTextEntry
+                        placeholder='Repeat Password'
                         leftIcon={<Icon name='lock' style={css.icon} size={20} color='#666' />}
                     />
                     <View style={css.buttonSection}>
-                        <Button title="Signin" buttonStyle={css.buttonContainer} />
+                        <Button 
+                            title="Signup"
+                            loading={this.state.active} 
+                            buttonStyle={css.buttonContainer} 
+                            onPress={this._register.bind(this)} />
                     </View>
                 </View>
             </View>

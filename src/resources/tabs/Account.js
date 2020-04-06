@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Button } from 'react-native-elements';
 
 export default class Account extends React.Component {
 
@@ -14,7 +13,6 @@ export default class Account extends React.Component {
         return (
             <View style={css.container}>
                 <Text>Account Screen</Text>
-                <Button title="Notify" />
             </View>
         );
     }
