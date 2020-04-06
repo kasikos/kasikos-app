@@ -23,7 +23,7 @@ export default class Signup extends React.Component {
             password: this.state.password
         };
 
-        if (_.isEmpty(creditials.email) == '' || _.isEmpty(creditials.password == '')) {
+        if (_.isEmpty(creditials.email) || _.isEmpty(creditials.password)) {
             this.setState({ active: false });
             return Alert.alert('Signup', 'Registration fail!');
         }
