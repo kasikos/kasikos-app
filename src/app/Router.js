@@ -101,4 +101,8 @@ export class Route {
         });
     }
 
+    static back() {
+        Navigation.pop();
+    }
+
 }

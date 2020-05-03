@@ -32,7 +32,7 @@ export default class Signin extends React.Component {
                 await Storage.set('token', 'asdhyIUOY908234LjaskK');
 
                 this.setState({ active: false });
-                return Route.set('Main');
+                return Route.back();
             }
         }
         

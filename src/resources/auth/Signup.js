@@ -13,7 +13,7 @@ export default class Signup extends React.Component {
 
     state = { email: null, password: null, active: false }
 
-    async _register() {
+    _register() {
 
         this.setState({ active: true });
 
@@ -29,10 +29,10 @@ export default class Signup extends React.Component {
         }
 
         // Store
-        await Storage.set('creditials', JSON.stringify(creditials));
-
-        this.setState({ active: false });
-        Alert.alert('Signup', 'Account registered successfully!');
+        Storage.set('creditials', JSON.stringify(creditials)).then(res => {
+            this.setState({ active: false });
+            Alert.alert('Signup', 'Account registered successfully!');
+        }, err => console.log(err));
 
     }
 

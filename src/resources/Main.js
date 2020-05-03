@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route } from '../app/Router';
 import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import RNSecureKeyStore from "react-native-secure-key-store";
@@ -15,7 +16,7 @@ import Auth from './auth/Auth';
 
 export default class Main extends React.Component {
 
-    state = { isLogged: null, index: 0, routes: [
+    state = { isLogged: false, index: 0, routes: [
         {key: 'home', title: 'Home' },
         {key: 'specials', title: 'Specials' },
         {key: 'orders', title: 'Orders' },
@@ -45,13 +46,11 @@ export default class Main extends React.Component {
         try {
             // Check token exits on the server before authenticating
             const res = await RNSecureKeyStore.get('token');
-            this.setState({ isLogged: true });
+            return this.setState({ isLogged: true });
             // Return true if exits and match local token
-        } catch(err) {
-            this.setState({ isLogged: false });
-        }
+        } catch(err) {}
 
-        console.log(this.state.isLogged);
+        Route.set('Auth');
     }
 
     static options(props) {
@@ -83,8 +82,6 @@ export default class Main extends React.Component {
                     onIndexChange={this._scenesChange.bind(this)}
                 />
             );
-        } else if (this.state.isLogged == false) {
-            return <Auth />
         } else {
             return (
                 <View style={css.indicator}>
